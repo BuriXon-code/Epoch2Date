@@ -1,0 +1,110 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+if [ -z "$1" ] || [[ ! "$1" =~ ^-?[0-9]+$ ]]; then
+	echo "Usage: $0 <epoch> (integer, positive or negative)"
+	exit 1
+fi
+
+epoch=$1
+
+days_of_week=("Saturday" "Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday")
+
+epoch_to_date_positive() {
+	local epoch=$1
+	local year=1970
+	local days=$((epoch / 86400))
+
+	while true; do
+		local leap_year=$(( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 366 : 365 ))
+		if ((days < leap_year)); then
+			break
+		fi
+		days=$((days - leap_year))
+		((year++))
+	done
+
+	echo "$year $days"
+}
+
+epoch_to_date_negative() {
+	local epoch=$1
+	local year=1969
+	local days=$((epoch / 86400))
+
+		while true; do
+		local leap_year=$(( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 366 : 365 ))
+		if ((days > -leap_year)); then
+			break
+		fi
+		days=$((days + leap_year))
+		((year--))
+	done
+
+	days=$((days + leap_year))
+
+	echo "$year $days"
+}
+
+if ((epoch >= 0)); then
+	read year days <<< "$(epoch_to_date_positive "$epoch")"
+else
+	read year days <<< "$(epoch_to_date_negative "$epoch")"
+fi
+
+month=1
+days_in_months=(31 28 31 30 31 30 31 31 30 31 30 31)
+if (((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))); then
+	days_in_months[1]=29
+fi
+
+while ((days < 0)); do
+	((month--))
+	if ((month == 0)); then
+	month=12
+	((year--))
+	fi
+	days=$((days + days_in_months[month-1]))
+done
+
+while ((days >= days_in_months[month-1])); do
+	days=$((days - days_in_months[month-1]))
+	((month++))
+	if ((month > 12)); then
+		month=1
+		((year++))
+	fi
+done
+
+day=$((days + 1))
+
+seconds_in_day=$((epoch % 86400))
+if ((seconds_in_day < 0)); then
+	seconds_in_day=$((86400 + seconds_in_day))
+	((day--))
+	if ((day == 0)); then
+		((month--))
+		if ((month == 0)); then
+			month=12
+			((year--))
+		fi
+		day=${days_in_months[month-1]}
+	fi
+fi
+
+hour=$((seconds_in_day / 3600))
+minute=$(((seconds_in_day % 3600) / 60))
+second=$((seconds_in_day % 60))
+
+adjusted_month=$((month))
+adjusted_year=$((year))
+if ((month == 1 || month == 2)); then
+	adjusted_month=$((month + 12))
+	adjusted_year=$((year - 1))
+fi
+
+k=$((adjusted_year % 100))
+j=$((adjusted_year / 100))
+
+day_of_week=$(((day + (13 * (adjusted_month + 1)) / 5 + k + k / 4 + j / 4 + 5 * j) % 7))
+
+printf "%s, %04d-%02d-%02d %02d:%02d:%02d UTC\n" "${days_of_week[day_of_week]}" "$year" "$month" "$day" "$hour" "$minute" "$second"
