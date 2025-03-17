@@ -1,5 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+# Epoch2Date calculator made by BuriXon-code (c) 2025
+
 if [ -z "$1" ] || [[ ! "$1" =~ ^-?[0-9]+$ ]]; then
 	echo "Usage: $0 <epoch> (integer, positive or negative)"
 	exit 1
