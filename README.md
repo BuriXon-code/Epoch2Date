@@ -42,6 +42,3 @@ Sunday 1914-10-18 01:24:54 UTC
 - If no argument is provided, the script should return an error message.
 - Ensure you pass a valid numeric timestamp.
 
-## License
-This project is open-source and licensed under the MIT License.
-
