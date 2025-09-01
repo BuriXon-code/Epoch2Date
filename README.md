@@ -42,3 +42,17 @@ Sunday 1914-10-18 01:24:54 UTC
 - If no argument is provided, the script should return an error message.
 - Ensure you pass a valid numeric timestamp.
 
+## Support
+### Contact me:
+For any issues, suggestions, or questions, reach out via:
+
+- *Email:* support@burixon.dev  
+- *Contact form:* [Click here](https://burixon.dev/contact/)
+- *Bug reports:* [Click here](https://burixon.dev/bugreport/#Epoch2Date)
+
+### Support me:
+If you find this script useful, consider supporting my work by making a donation:
+
+[**Donations**](https://burixon.dev/donate/)
+
+Your contributions help in developing new projects and improving existing tools!
